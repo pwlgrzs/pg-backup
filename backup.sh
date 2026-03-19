@@ -4,6 +4,7 @@ set -euo pipefail
 # ── env vars (injected via Docker) ──────────────────────────────────────────
 : "${BACKUP_PATH:?BACKUP_PATH is required}"
 : "${SERVER_NAME:?SERVER_NAME is required}"
+: "${DB_PORT:?DB_PORT is required}"
 : "${USER_NAME:?USER_NAME is required}"
 : "${PASSWORD:?PASSWORD is required}"
 : "${ROTATE:?ROTATE (days) is required}"
@@ -15,7 +16,7 @@ DATE=$(date +"%Y-%m-%d_%H%M%S")
 echo "[$(date)] Starting backup from server: $SERVER_NAME"
 
 # ── Fetch all user databases (skip system ones) ──────────────────────────────
-DATABASES=$(psql -h "$SERVER_NAME" -U "$USER_NAME" -d postgres -t -A -c \
+DATABASES=$(psql -h "$SERVER_NAME" -p "$DB_PORT" -U "$USER_NAME" -d postgres -t -A -c \
   "SELECT datname FROM pg_database WHERE datistemplate = false AND datname NOT IN ('postgres');")
 
 if [ -z "$DATABASES" ]; then
@@ -34,6 +35,7 @@ for DB in $DATABASES; do
 
   pg_dump \
     -h "$SERVER_NAME" \
+    -p "$DB_PORT" \
     -U "$USER_NAME" \
     -Fc \
     "$DB" > "$BACKUP_FILE"
