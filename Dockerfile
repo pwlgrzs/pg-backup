@@ -1,6 +1,6 @@
 FROM postgres:17-alpine
 
-RUN apk add --no-cache bash busybox-suid
+RUN apk add --no-cache bash busybox-suid curl tzdata
 
 COPY backup.sh /usr/local/bin/backup.sh
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
