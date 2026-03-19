@@ -15,6 +15,19 @@ DATE=$(date +"%Y-%m-%d_%H%M%S")
 
 echo "[$(date)] Starting backup from server: $SERVER_NAME"
 
+# ── Validate backup path ─────────────────────────────────────────────────────
+echo "[$(date)] Backup root: $BACKUP_PATH"
+echo "[$(date)] Disk space:"
+df -h "$BACKUP_PATH"
+
+if ! touch "${BACKUP_PATH}/.write_test" 2>/dev/null; then
+  echo "[ERROR] Cannot write to $BACKUP_PATH — permission denied!"
+  ls -la "$(dirname "$BACKUP_PATH")"
+  exit 1
+fi
+rm -f "${BACKUP_PATH}/.write_test"
+echo "[$(date)] ✔ Backup path is writable"
+
 # ── Fetch all user databases (skip system ones) ──────────────────────────────
 DATABASES=$(psql -h "$SERVER_NAME" -p "$DB_PORT" -U "$USER_NAME" -d postgres -t -A -c \
   "SELECT datname FROM pg_database WHERE datistemplate = false AND datname NOT IN ('postgres');")

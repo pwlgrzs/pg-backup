@@ -1,6 +1,26 @@
 #!/bin/bash
 set -euo pipefail
 
+# ── Validate backup path is mounted and writable ─────────────────────────────
+echo "[$(date)] Checking mount at /backups..."
+
+if [ ! -d "/backups" ]; then
+  echo "[ERROR] /backups directory does not exist — volume not mounted!"
+  exit 1
+fi
+
+if ! touch /backups/.write_test 2>/dev/null; then
+  echo "[ERROR] /backups is not writable — check permissions on the host path!"
+  echo "[ERROR] Current mount info:"
+  mount | grep backups || echo "(no mount entry found for /backups)"
+  echo "[ERROR] Directory listing of /:"
+  ls -la / | grep backups
+  exit 1
+fi
+
+rm -f /backups/.write_test
+echo "[$(date)] ✔ /backups is mounted and writable"
+
 # Make Docker env vars available to cron
 printenv | grep -v "no_proxy" >> /etc/environment
 
