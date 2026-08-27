@@ -1,0 +1,9 @@
+# Scripts that run inside the Linux container must always use LF line endings,
+# even when checked out on Windows (CRLF breaks the shebang / `. /etc/environment`).
+*.sh            text eol=lf
+entrypoint.sh   text eol=lf
+backup.sh       text eol=lf
+Dockerfile      text eol=lf
+*.yml           text eol=lf
+*.yaml           text eol=lf
+.env.example    text eol=lf

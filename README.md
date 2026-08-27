@@ -98,7 +98,7 @@ If any database fails, the status changes to ⚠️ and the failed database is m
 ## Running a Manual Backup
 
 ```bash
-docker exec pg-backup-1 /usr/local/bin/backup.sh
+docker exec pg-backup /usr/local/bin/backup.sh
 ```
 
 ---
@@ -154,4 +154,3 @@ docker pull ghcr.io/pwlgrzs/pg-backup:latest
 ## License
 
 MIT
-```

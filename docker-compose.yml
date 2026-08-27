@@ -1,0 +1,10 @@
+services:
+  pg-backup:
+    build: .
+    # Or use the pre-built image instead of building locally:
+    # image: ghcr.io/pwlgrzs/pg-backup:latest
+    container_name: pg-backup
+    env_file: .env
+    volumes:
+      - ${BACKUP_PATH:?set BACKUP_PATH in .env}:/backups
+    restart: unless-stopped
